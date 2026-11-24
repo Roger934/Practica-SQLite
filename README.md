@@ -24,14 +24,33 @@ Cada registro se identifica con `id`, un entero que SQLite asigna automáticamen
 
 ```bash
 flutter pub get
+dart run build_runner build   # regenera lib/data/app_database.g.dart si cambia la tabla
 flutter analyze
 flutter test
-flutter run -d windows   # o -d chrome
+flutter run -d emulator-5554  # o -d chrome
 ```
+
+> En build_runner 2.17 ya no existe la opción `--delete-conflicting-outputs`.
+
+## Estructura
+
+- `lib/data/app_database.dart`: tabla `Tareas`, apertura de la base con `driftDatabase` y operaciones.
+- `lib/data/app_database.g.dart`: código generado por Drift (no se edita a mano).
+- `lib/data/validaciones.dart`: validación del título, independiente de la interfaz.
+- `lib/screens/tareas_page.dart`: interfaz; lee las tareas con un `StreamBuilder`, sin consultas dentro de `build()`.
+
+## Plataformas verificadas
+
+| Plataforma                         | Estado                  | Pruebas            |
+|------------------------------------|-------------------------|--------------------|
+| Android 15 (emulador, API 35)      | Probada                 | P1 y P5 correctas  |
+| Web (Chrome)                       | Pendiente               |                    |
+| Windows                            | Prevista (falta Visual Studio C++) |         |
+| iOS / macOS / Linux                | Previstas, no probadas  |                    |
 
 ## Estado del proyecto
 
 - [x] Etapa 1: preparación y diseño
-- [ ] Etapa 2: persistencia real (crear y consultar)
+- [x] Etapa 2: persistencia real (crear y consultar)
 - [ ] Etapa 3: edición, cambio de estado y eliminación
 - [ ] Etapa 4: web, pruebas y documentación de plataformas
