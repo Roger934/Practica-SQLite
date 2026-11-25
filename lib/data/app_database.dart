@@ -54,13 +54,47 @@ class AppDatabase extends _$AppDatabase {
   /// INSERT. Valida y normaliza el título antes de guardarlo.
   /// Devuelve el id asignado.
   Future<int> agregarTarea(String titulo) {
-    final error = validarTitulo(titulo);
-    if (error != null) {
-      throw ArgumentError(error);
-    }
+    _comprobarTitulo(titulo);
     return into(tareas).insert(
       TareasCompanion.insert(titulo: normalizarTitulo(titulo)),
     );
+  }
+
+  /// UPDATE del título de la tarea con ese id.
+  Future<void> actualizarTitulo(int id, String titulo) async {
+    _comprobarTitulo(titulo);
+    final filas = await (update(tareas)..where((t) => t.id.equals(id)))
+        .write(TareasCompanion(titulo: Value(normalizarTitulo(titulo))));
+    _comprobarExiste(filas, id);
+  }
+
+  /// UPDATE del estado (completada o pendiente) de la tarea con ese id.
+  Future<void> cambiarEstado(int id, bool completada) async {
+    final filas = await (update(tareas)..where((t) => t.id.equals(id)))
+        .write(TareasCompanion(completada: Value(completada)));
+    _comprobarExiste(filas, id);
+  }
+
+  /// DELETE de la tarea con ese id.
+  Future<void> eliminarTarea(int id) async {
+    final filas =
+        await (delete(tareas)..where((t) => t.id.equals(id))).go();
+    _comprobarExiste(filas, id);
+  }
+
+  static void _comprobarTitulo(String titulo) {
+    final error = validarTitulo(titulo);
+    if (error != null) {
+      throw TareaException(error);
+    }
+  }
+
+  /// UPDATE y DELETE devuelven cuántas filas afectaron; 0 significa que el
+  /// id ya no existe (por ejemplo, se borró en otra pantalla).
+  static void _comprobarExiste(int filasAfectadas, int id) {
+    if (filasAfectadas == 0) {
+      throw TareaException('La tarea con ID $id ya no existe.');
+    }
   }
 
   static Tarea _aModelo(TareaEntidad fila) => Tarea(

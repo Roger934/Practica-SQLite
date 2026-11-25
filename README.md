@@ -43,7 +43,7 @@ flutter run -d emulator-5554  # o -d chrome
 
 | Plataforma                         | Estado                  | Pruebas            |
 |------------------------------------|-------------------------|--------------------|
-| Android 15 (emulador, API 35)      | Probada                 | P1 y P5 correctas  |
+| Android 15 (emulador, API 35)      | Probada                 | P1 a P5 correctas  |
 | Web (Chrome)                       | Pendiente               |                    |
 | Windows                            | Prevista (falta Visual Studio C++) |         |
 | iOS / macOS / Linux                | Previstas, no probadas  |                    |
@@ -52,5 +52,5 @@ flutter run -d emulator-5554  # o -d chrome
 
 - [x] Etapa 1: preparación y diseño
 - [x] Etapa 2: persistencia real (crear y consultar)
-- [ ] Etapa 3: edición, cambio de estado y eliminación
+- [x] Etapa 3: edición, cambio de estado y eliminación
 - [ ] Etapa 4: web, pruebas y documentación de plataformas
