@@ -27,10 +27,34 @@ flutter pub get
 dart run build_runner build   # regenera lib/data/app_database.g.dart si cambia la tabla
 flutter analyze
 flutter test
-flutter run -d emulator-5554  # o -d chrome
+flutter run -d emulator-5554  # Android
 ```
 
 > En build_runner 2.17 ya no existe la opción `--delete-conflicting-outputs`.
+
+### Web
+
+SQLite corre en el navegador compilado a WebAssembly. `web/` contiene dos archivos de la release oficial
+[drift-2.35.4](https://github.com/simolus3/drift/releases/tag/drift-2.35.4), la misma versión de `drift` del `pubspec.lock`:
+
+- `web/sqlite3.wasm`: SQLite compilado a WebAssembly.
+- `web/drift_worker.js`: worker que ejecuta la base fuera del hilo de la interfaz.
+
+Si se actualiza `drift`, hay que descargar los dos archivos de la release que coincida con la nueva versión.
+
+Para ejecutar la app y probar la persistencia:
+
+```bash
+flutter run -d web-server --web-port 8080 --web-hostname localhost
+```
+
+Luego abre http://localhost:8080 en tu Chrome habitual.
+
+- No uses `flutter run -d chrome` para probar persistencia: abre Chrome con un perfil temporal nuevo en cada ejecución y las tareas parecen perderse.
+- Los datos dependen del origen. `localhost:8080`, `localhost:5000` y `127.0.0.1:8080` son bases distintas.
+- Drift eligió `sharedIndexedDb`, porque OPFS necesita las cabeceras COOP/COEP que el servidor de desarrollo no envía.
+- En modo incógnito, o si se borran los datos del sitio, las tareas se pierden.
+- Los datos **no** se sincronizan con Android: cada plataforma tiene su propia base local.
 
 ## Estructura
 
@@ -44,7 +68,7 @@ flutter run -d emulator-5554  # o -d chrome
 | Plataforma                         | Estado                  | Pruebas            |
 |------------------------------------|-------------------------|--------------------|
 | Android 15 (emulador, API 35)      | Probada                 | P1 a P5 correctas  |
-| Web (Chrome)                       | Pendiente               |                    |
+| Web (Chrome, localhost:8080)       | Probada                 | P6 correcta        |
 | Windows                            | Prevista (falta Visual Studio C++) |         |
 | iOS / macOS / Linux                | Previstas, no probadas  |                    |
 
