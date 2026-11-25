@@ -53,7 +53,9 @@ class AppDatabase extends _$AppDatabase {
 
   /// INSERT. Valida y normaliza el título antes de guardarlo.
   /// Devuelve el id asignado.
-  Future<int> agregarTarea(String titulo) {
+  /// Es async para que un título inválido llegue como Future con error
+  /// (igual que un fallo de SQLite) y no como excepción síncrona.
+  Future<int> agregarTarea(String titulo) async {
     _comprobarTitulo(titulo);
     return into(tareas).insert(
       TareasCompanion.insert(titulo: normalizarTitulo(titulo)),

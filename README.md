@@ -72,9 +72,41 @@ Luego abre http://localhost:8080 en tu Chrome habitual.
 | Windows                            | Prevista (falta Visual Studio C++) |         |
 | iOS / macOS / Linux                | Previstas, no probadas  |                    |
 
+## Pruebas manuales (P1–P6)
+
+| ID | Acción | Esperado | Android 15 (emulador) | Chrome |
+|----|--------|----------|-----------------------|--------|
+| P1 | Agregar tres tareas, cerrar la app por completo y abrirla | Permanecen las tres | Correcta | — |
+| P2 | Marcar una como completada y reiniciar | Se conserva el estado | Correcta | — |
+| P3 | Cambiar el título y reiniciar | Aparece el nuevo título | Correcta | — |
+| P4 | Eliminar una tarea y reiniciar | No reaparece | Correcta | — |
+| P5 | Intentar agregar un título vacío | No se registra | Correcta | — |
+| P6 | Recargar y cerrar/abrir la pestaña (mismo origen y perfil) | Los datos permanecen | — | Correcta |
+
+En Android, "reiniciar" significa cerrar la app desde la vista de recientes y volver a abrirla. Un hot reload no prueba la persistencia porque no reinicia el proceso.
+
+## Pruebas automatizadas
+
+```bash
+flutter test
+```
+
+Son 16 pruebas en total:
+
+- **`test/validaciones_test.dart`** (6 pruebas unitarias): rechaza títulos vacíos, de solo espacios o de más de 200 caracteres; acepta el límite exacto y los títulos con espacios alrededor.
+- **`test/app_database_test.dart`** (7 pruebas): ejecutan la capa de datos sobre SQLite real en memoria (`NativeDatabase.memory()`).
+  - INSERT con normalización y rechazo de títulos vacíos.
+  - SELECT ordenado y con ids únicos.
+  - UPDATE de título y de estado, conservando el título anterior si el nuevo es inválido.
+  - DELETE de una sola tarea.
+  - Error comprensible (`TareaException`) cuando el id no existe.
+- **`test/widget_test.dart`** (3 pruebas de interfaz): la pantalla inicial carga; agregar desde la interfaz muestra la tarea y la guarda en la base; un título vacío muestra el mensaje y no guarda nada (P5).
+
+Las pruebas usan una base en memoria, así que no modifican los datos reales de la app.
+
 ## Estado del proyecto
 
 - [x] Etapa 1: preparación y diseño
 - [x] Etapa 2: persistencia real (crear y consultar)
 - [x] Etapa 3: edición, cambio de estado y eliminación
-- [ ] Etapa 4: web, pruebas y documentación de plataformas
+- [x] Etapa 4: web, pruebas y documentación de plataformas
