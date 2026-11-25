@@ -22,9 +22,15 @@ Cada registro se identifica con `id`, un entero que SQLite asigna automáticamen
 
 ## Requisitos y ejecución
 
+- Flutter 3.47 (stable) con Dart 3.13 o superior.
+- Android: Android SDK y un emulador o dispositivo. Web: Chrome.
+- No necesita servidor, internet ni cuentas: todos los datos son locales.
+
 ```bash
+git clone https://github.com/Roger934/Practica-SQLite.git
+cd Practica-SQLite
 flutter pub get
-dart run build_runner build   # regenera lib/data/app_database.g.dart si cambia la tabla
+dart run build_runner build   # opcional: app_database.g.dart ya está en el repo; solo si cambia la tabla
 flutter analyze
 flutter test
 flutter run -d emulator-5554  # Android
